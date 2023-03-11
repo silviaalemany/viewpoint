@@ -1,10 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
-
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import AddButton from './AddButton';
 import { MAPBOXKEY } from './keys';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 // TODO: Move this to .env file. 
 mapboxgl.accessToken = MAPBOXKEY.apiKey;
 
@@ -12,6 +12,7 @@ export default function App() {
 	const mapContainer = useRef(null);
 	const map = useRef(null);
 	var foundCurrentLocation = useRef(null);
+	var activatedSearchBar = useRef(null);
 	// TODO: Move these configs to some other file. 
 	const [lng, setLng] = useState(-75.158924);
 	const [lat, setLat] = useState(39.9629223);
@@ -39,6 +40,19 @@ export default function App() {
 			});
 		});
 	
+	useEffect(()=>{
+		if(activatedSearchBar.current) return;
+		activatedSearchBar.current = true;
+		map.current.addControl(
+			new MapboxGeocoder({
+			accessToken: mapboxgl.accessToken,
+			mapboxgl: mapboxgl,
+			marker: false,
+			placeholder: 'Search for location'
+			})
+		);
+	});
+
 	useEffect(() => {
 		if(foundCurrentLocation.current) return;
 		foundCurrentLocation.current = true;
@@ -53,7 +67,10 @@ export default function App() {
 			showUserHeading: true
 			})
 		);
+		
 	});
+
+	
 
 	useEffect(() => {
 		if (!map.current) return; // wait for map to initialize
@@ -75,6 +92,7 @@ export default function App() {
 			// Update state of current click. 
 			pinLng = coordinates.lng;
 			pinLat = coordinates.lat;
+			// setSearchBar(geocoder.query(String(pinLat) + String(pinLng)));
 			if(marker){
 				marker = marker.remove()
 			}
@@ -90,11 +108,11 @@ export default function App() {
 		});
 	})
 	
+
+
+
 	return (
 		<div>
-		<div className="sidebar">
-		Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
-		</div>
 		<div ref={mapContainer} className="map-container" />
 		<AddButton getPinCoordinates={getCoordinates} setFormData={setFormData}/>
 		</div>
