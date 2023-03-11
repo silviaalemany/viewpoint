@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/Form';
 import React, { useState } from 'react';
 import UploadButton from './uploadButton';
 
-export default function AddButton({getPinCoordinates, setFormData}) {
+export default function AddButton({getPinCoordinates, getAddress, setFormData}) {
     const [show, setShow] = useState(false)
 
     var caption;
@@ -48,7 +48,7 @@ export default function AddButton({getPinCoordinates, setFormData}) {
             <Modal.Title>New Suggestion</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <h3>Location: <h6>{coordinateToString()}</h6> </h3>
+            <h3>Location: <h6>{coordinateToString()}{getAddress()}</h6> </h3>
           <Form>
             <Form.Group className="mb-3">
             <Form.Label>Caption</Form.Label>

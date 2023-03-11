@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import axios from 'axios';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
@@ -22,6 +23,13 @@ export default function App() {
 	var pinLat;
 	var marker;
 	var formData = {}
+	var geocoder = new MapboxGeocoder({
+		accessToken: mapboxgl.accessToken,
+		mapboxgl: mapboxgl,
+		marker: false,
+		placeholder: 'Search for location',
+		reverseGeocode:true
+		});
 
 	function setFormData(image, description, caption) {
 		formData.image = image;
@@ -44,12 +52,7 @@ export default function App() {
 		if(activatedSearchBar.current) return;
 		activatedSearchBar.current = true;
 		map.current.addControl(
-			new MapboxGeocoder({
-			accessToken: mapboxgl.accessToken,
-			mapboxgl: mapboxgl,
-			marker: false,
-			placeholder: 'Search for location'
-			})
+			geocoder
 		);
 	});
 
@@ -84,6 +87,20 @@ export default function App() {
 		return {pinLat: pinLat, pinLng: pinLng}
 	}
 
+	function getAddress()
+	{	
+		if (pinLng && pinLat) {
+			var url = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + String(pinLng) + "," + String(pinLat) + ".json?access_token=" + mapboxgl.accessToken;
+			axios.get(url)
+				.then(res=> {
+					console.log(res.data.features[0].place_name);
+					return;
+				});
+		} else {
+			return;
+		}
+	}
+
 	function mapClickFn(coordinates)
 	{
 		if(coordinates.lng !== pinLng || coordinates.lat !== pinLat) {
@@ -109,7 +126,7 @@ export default function App() {
 	return (
 		<div>
 		<div ref={mapContainer} className="map-container" />
-		<AddButton getPinCoordinates={getCoordinates} setFormData={setFormData}/>
+		<AddButton getPinCoordinates={getCoordinates} getAddress={getAddress} setFormData={setFormData}/>
 		</div>
 		);
 
