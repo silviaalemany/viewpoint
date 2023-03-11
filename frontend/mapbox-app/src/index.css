@@ -3,7 +3,7 @@
   width: 100vw;
 }
 
-.material-symbols-outlined {
+/* .material-symbols-outlined {
   color: #fff;
   padding: 6px 12px;
   z-index: 1;
@@ -17,6 +17,17 @@
   'wght' 400,
   'GRAD' 0,
   'opsz' 48, 
+} */
+
+
+.AddButton {
+  padding: 6px 6px;
+  z-index: 1;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 12px;
+  border-radius: 50%;
 }
 
 .sidebar {

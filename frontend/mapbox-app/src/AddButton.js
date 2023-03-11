@@ -1,11 +1,11 @@
-import React, { useRef, useEffect, useState } from 'react';
+import MaterialIcon, {colorPalette} from 'material-icons-react';
+import Button from 'react-bootstrap/Button';
 
 export default function AddButton() {
 
     return (
-    <div>
-        <span class="material-symbols-outlined">
-            addButton
-        </span>
-    </div>);
+    <Button className="AddButton" variant="primary">
+        <MaterialIcon icon="add" color="black"></MaterialIcon>
+    </Button>
+    );
 }

@@ -2,10 +2,10 @@ import React, { useRef, useEffect, useState } from 'react';
 
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import AddButton from './AddButton';
-import { MAPBOXKEY } from '../../keys';
+import { MAPBOXKEY } from './keys';
 
 // TODO: Move this to .env file. 
-mapboxgl.accessToken = MAPBOXKEY;
+mapboxgl.accessToken = MAPBOXKEY.apiKey;
 
 export default function App() {
 	const mapContainer = useRef(null);
@@ -71,7 +71,6 @@ export default function App() {
 		<AddButton/>
 		</div>
 		);
-
 
 }
 
