@@ -56,6 +56,11 @@ export default function App() {
 		});
 	});
 
+	function getCoordinates()
+	{
+		return {pinLat: pinLat, pinLng: pinLng}
+	}
+
 	function mapClickFn(coordinates)
 	{
 		if(coordinates.lng !== pinLng || coordinates.lat !== pinLat) {
@@ -77,16 +82,13 @@ export default function App() {
 		});
 	})
 	
-
-
-
 	return (
 		<div>
 		<div className="sidebar">
 		Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
 		</div>
 		<div ref={mapContainer} className="map-container" />
-		<AddButton/>
+		<AddButton getPinCoordinates={getCoordinates}/>
 		</div>
 		);
 
