@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Transparent Image Creator</title>
+</head>
+<body>
+  <h1>Transparent Image Creator</h1>
+  <form action="/upload" method="post" enctype="multipart/form-data">
+    <label>
+      Image:
+      <input type="file" name="image" required>
+    </label>
+    <br>
+    <label>
+      Width:
+      <input type="number" name="width" required>
+    </label>
+    <label>
+      Height:
+      <input type="number" name="height" required>
+    </label>
+    <br>
+    <canvas id="canvas"></canvas>
+    <br>
+    <button type="submit">Create Transparent Image</button>
+  </form>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    let region = null;
+    let mouseDown = false;
+
+    canvas.width = 500;
+    canvas.height = 500;
+
+    canvas.addEventListener('mousedown', (event) => {
+      mouseDown = true;
+
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      region = { x, y, w: 0, h: 0 };
+    });
+
+    canvas.addEventListener('mousemove', (event) => {
+      if (!mouseDown || !region) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      region.w = x - region.x;
+      region.h = y - region.y;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeRect(region.x, region.y, region.w, region.h);
+    });
+
+    canvas.addEventListener('mouseup', () => {
+      mouseDown = false;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      mouseDown = false;
+    });
+
+    canvas.addEventListener('mouseenter', () =>  {
+    mouseDown = false;
+});
+
+canvas.addEventListener('contextmenu', (event) => {
+  event.preventDefault();
+
+  region = null;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+});
+
+canvas.addEventListener('wheel', (event) => {
+  event.preventDefault();
+
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+
+  const delta = Math.sign(event.deltaY);
+
+  const scale = delta > 0 ? 0.9 : 1.1;
+
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+  ctx.translate(-x, -y);
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (region) {
+    ctx.strokeRect(region.x, region.y, region.w, region.h);
+  }
+});
+  </script>
+</body>
+</html>
