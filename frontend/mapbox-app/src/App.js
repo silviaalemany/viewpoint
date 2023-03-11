@@ -10,6 +10,7 @@ mapboxgl.accessToken = MAPBOXKEY.apiKey;
 export default function App() {
 	const mapContainer = useRef(null);
 	const map = useRef(null);
+	var foundCurrentLocation = useRef(null);
 	// TODO: Move these configs to some other file. 
 	const [lng, setLng] = useState(-75.158924);
 	const [lat, setLat] = useState(39.9629223);
@@ -28,6 +29,22 @@ export default function App() {
 			zoom: zoom
 			});
 		});
+	
+	useEffect(() => {
+		if(foundCurrentLocation.current) return;
+		foundCurrentLocation.current = true;
+		map.current.addControl(
+			new mapboxgl.GeolocateControl({
+			positionOptions: {
+			enableHighAccuracy: true
+			},
+			// When active the map will receive updates to the device's location as it changes.
+			trackUserLocation: true,
+			// Draw an arrow next to the location dot to indicate which direction the device is heading.
+			showUserHeading: true
+			})
+		);
+	});
 
 	useEffect(() => {
 		if (!map.current) return; // wait for map to initialize
