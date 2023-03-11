@@ -23,6 +23,8 @@ function makeid(length) {
 }
 
 app.use('/create', (req, res) => {
+	//URI target: /create?userID=<userID>&upvotes=0&downvotes=0&caption=<caption>&desc=<description>&lat=<lat>&long=<long>
+	// output: response message saying if operation is succesful
 	var randID = makeid(20);  
     // construct the suggestion from the form data which is in the request body
 	var post = new suggestion ({
@@ -56,6 +58,8 @@ app.use('/create', (req, res) => {
 
 // endpoint for showing all the people
 app.use('/get', (req, res) => {
+	// URI target: /get?id=<post_id>
+	// output: JSON representation of the object
 	var filter = { 'id' : req.query.id } ;
 	suggestion.find( filter, (err, post) => {
 		if (err) {
@@ -83,7 +87,8 @@ app.use('/get', (req, res) => {
 });
 
 app.use('/delete', (req, res) => {
-	// construct the Person from the form data which is in the request body
+	// URI target: /delete?id=<post_id>
+	// output: delete the post + message saying if succesful
 	var filter = { 'id' : req.query.id } ;
 	// delete the person to the database
 	suggestion.findOneAndDelete( filter, (err, post) => {
@@ -100,6 +105,7 @@ app.use('/delete', (req, res) => {
 });
 
 app.use('/upvote', (req, res) => { 
+	// URI target: /upvote?id=<post_id>
     var id = req.query.id;
     if (!id) {
         res.json( { 'status' : 'missing data' }); 
@@ -127,6 +133,7 @@ app.use('/upvote', (req, res) => {
 });
 
 app.use('/downvote', (req, res) => { 
+	// URI target: /downvote?id=<post_id>
     var id = req.query.id;
     if (!id) {
         res.json( { 'status' : 'missing data' }); 
@@ -154,6 +161,7 @@ app.use('/downvote', (req, res) => {
 });
 
 app.use('/resolve', (req, res) => { 
+	// URI target: /resolve?id=<post_id>
     var id = req.query.id;
     if (!id) {
         res.json( { 'status' : 'missing data' }); 
