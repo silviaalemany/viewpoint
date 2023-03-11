@@ -3,15 +3,38 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import React, { useState } from 'react';
+import UploadButton from './uploadButton';
 
-export default function AddButton({getPinCoordinates}) {
+export default function AddButton({getPinCoordinates, setFormData}) {
     const [show, setShow] = useState(false)
+
+    var caption;
+    var description;
+    var imageFile;
+
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    function onSubmit() {
+        setFormData(imageFile, description, caption);
+        handleClose();
+    }
+
+    function updateDescription(event) {
+        description = event.target.value;
+    }
+
+    function updateCaption(event) {
+        caption = event.target.value;
+    }
 
     function coordinateToString() {
 
         return String(getPinCoordinates().pinLat) + ", " + String(getPinCoordinates().pinLng);
+    }
+
+    function updateImageSource(newSource) {
+        imageFile = newSource;
     }
 
     return (
@@ -29,23 +52,21 @@ export default function AddButton({getPinCoordinates}) {
           <Form>
             <Form.Group className="mb-3">
             <Form.Label>Caption</Form.Label>
-                <Form.Control placeholder="What's wrong?" />
+                <Form.Control name="caption" onChange={updateCaption} />
                 <Form.Label>Description</Form.Label>
-                <Form.Control as="textarea" rows={3} />
+                <Form.Control name="description" as="textarea" rows={3} placeholder="Describe the Problem" onChange={updateDescription}/>
                 
             </Form.Group>
-            <Button variant="primary" type="submit">
-                Submit
-            </Button>
+            <UploadButton setImageSource={updateImageSource}/>
         </Form>
 
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Close
+            <Button variant="outline-danger" onClick={handleClose}>
+              Cancel
             </Button>
-            <Button variant="primary" onClick={handleClose}>
-              Save Changes
+            <Button variant="outline-primary" onClick={onSubmit}>
+              Submit
             </Button>
           </Modal.Footer>
         </Modal>

@@ -20,6 +20,14 @@ export default function App() {
 	var pinLng;
 	var pinLat;
 	var marker;
+	var formData = {}
+
+	function setFormData(image, description, caption) {
+		formData.image = image;
+		formData.caption = caption; 
+		formData.description = description;
+		console.log(formData);
+	}
 
 	useEffect(() => {
 		if (map.current) return; // initialize map only once
@@ -88,7 +96,7 @@ export default function App() {
 		Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
 		</div>
 		<div ref={mapContainer} className="map-container" />
-		<AddButton getPinCoordinates={getCoordinates}/>
+		<AddButton getPinCoordinates={getCoordinates} setFormData={setFormData}/>
 		</div>
 		);
 
