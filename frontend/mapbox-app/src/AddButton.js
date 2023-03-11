@@ -3,16 +3,6 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import React, { useState } from 'react';
 
-// export default function AddButton() {
-
-//     return (
-//     <Button className="AddButton" variant="primary" onClick={}>
-//         <MaterialIcon icon="add" color="black"></MaterialIcon>
-//     </Button>
-//     );
-    
-// }
-
 export default function AddButton() {
     const [show, setShow] = useState(false);
   
@@ -25,7 +15,7 @@ export default function AddButton() {
         <MaterialIcon icon="add" color="black"></MaterialIcon>
     </Button>
   
-        <Modal show={show} onHide={handleClose} centered>
+        <Modal show={show} onHide={handleClose} animation={false} centered>
           <Modal.Header closeButton>
             <Modal.Title>Modal heading</Modal.Title>
           </Modal.Header>

@@ -3,6 +3,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import AddButton from './AddButton';
 import { MAPBOXKEY } from './keys';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 // TODO: Move this to .env file. 
 mapboxgl.accessToken = MAPBOXKEY.apiKey;
