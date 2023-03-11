@@ -70,8 +70,6 @@ export default function App() {
 		
 	});
 
-	
-
 	useEffect(() => {
 		if (!map.current) return; // wait for map to initialize
 		map.current.on('move', () => {
@@ -108,9 +106,6 @@ export default function App() {
 		});
 	})
 	
-
-
-
 	return (
 		<div>
 		<div ref={mapContainer} className="map-container" />
