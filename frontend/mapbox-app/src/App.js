@@ -1,9 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
 
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
+import AddButton from './AddButton';
+import { MAPBOXKEY } from '../../keys';
 
 // TODO: Move this to .env file. 
-mapboxgl.accessToken = 'pk.eyJ1IjoiaHdlaW5zdG9jayIsImEiOiJjbGY0N2MwbncwM2w0M3ZzMnNlbTh6a2w0In0.0NAQOFar7N6hGYcPx_MGfA';
+mapboxgl.accessToken = MAPBOXKEY;
 
 export default function App() {
 	const mapContainer = useRef(null);
@@ -66,6 +68,7 @@ export default function App() {
 		Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
 		</div>
 		<div ref={mapContainer} className="map-container" />
+		<AddButton/>
 		</div>
 		);
 

@@ -3,6 +3,22 @@
   width: 100vw;
 }
 
+.material-symbols-outlined {
+  color: #fff;
+  padding: 6px 12px;
+  z-index: 1;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 12px;
+  border-radius: 4px;
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 48, 
+}
+
 .sidebar {
   background-color: rgba(35, 55, 75, 0.9);
   color: #fff;
