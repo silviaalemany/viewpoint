@@ -29,12 +29,12 @@ export default function App() {
 	var marker;
 	var formData = {};
 
-
+	console.log(allSuggestions);
 	async function getAllSuggestions() {
 		axios.post(backend_url + '/list?')
 		.then((resp) => setAllSuggestions(resp.data));
 	}
-	
+
 	// On mount, query database for all the existing entries. 
 	useEffect(() => {
 		getAllSuggestions();
