@@ -30,6 +30,7 @@ app.use('/create', (req, res) => {
 	//URI target: /create?userID=<userID>&upvotes=0&downvotes=0&caption=<caption>&desc=<description>&lat=<lat>&long=<long>
 	// output: response message saying if operation is succesful
 	var randID = makeid(20);  
+	console.log(req.query.img);
     // construct the suggestion from the form data which is in the request body
 	var post = new suggestion ({
 		id: randID.toString(),  
@@ -38,7 +39,7 @@ app.use('/create', (req, res) => {
 		downvotes: req.query.upvotes,
 		// caption is input to DALL-E
 		caption: req.query.caption,
-		img: req.query.imgFile,
+		img: req.query.img,
 		// desc is user description (supplemental)
 		desc: req.query.desc,
 		lat: req.query.lat,
@@ -181,7 +182,8 @@ app.use('/upvote', (req, res) => {
 				} else if (!p || p.length == 0) {
 					res.json( { 'status' : 'not found' } );
 				} else {
-					res.json( { 'status' : 'updated' } );
+					res.json( { 'status' : 'updated', 
+								'new_value': n} );
 				}
 			});
 		}
@@ -209,7 +211,8 @@ app.use('/downvote', (req, res) => {
 				} else if (!p || p.length == 0) {
 					res.json( { 'status' : 'not found' } );
 				} else {
-					res.json( { 'status' : 'updated' } );
+					res.json( { 'new_value': n, 
+								'status': 'updated' } );
 				}
 			});
 		}

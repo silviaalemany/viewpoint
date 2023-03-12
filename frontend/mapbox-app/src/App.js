@@ -5,6 +5,7 @@ import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-load
 import axios from 'axios';
 
 import AddButton from './AddButton';
+import SuggestionView from './suggestionView';
 import { MAPBOXKEY } from './keys';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // TODO: Move this to .env file. 
@@ -24,10 +25,12 @@ export default function App() {
 	const [allSuggestions, setAllSuggestions] = useState([]);
 	const [markers, setMarkers] = useState([]);
 	const [address, setAddress] = useState('');
-	const [pinLoc, setPinLoc] = useState();
+	const [showSuggestion, setShowSuggestion] = useState(false);
+	const [currentSuggestion, setCurrentSuggestion] = useState('');
 
 	const userId = '0';
 
+	var pinLoc = {}
 	var pinMarker;
 	var formData = {};
 
@@ -36,25 +39,51 @@ export default function App() {
 	}
 
 	async function updateSuggestions() {
+		console.log('updating suggestions.');
 		const resp = await getAllSuggestions();
 		setAllSuggestions(resp.data.entries);
+	}
+
+	function repopulateMarkers() {
+		for(let i = 0; i < allSuggestions.length; i++)
+		{
+			var upvotes = allSuggestions[i].upvotes - allSuggestions[i].downvotes;
+			var color = upvotes > 4 ? 'cyan' : 
+						upvotes > 2 ? 'blue' : 'purple'
+			var newMarker = new mapboxgl.Marker({color: color})
+		
+			newMarker.setLngLat([allSuggestions[i].long, allSuggestions[i].lat])
+			.addTo(map.current)
+			.getElement().addEventListener('click', () => {
+				//console.log(allSuggestions[i])
+				setShowSuggestion(true);
+				setCurrentSuggestion(allSuggestions[i])
+			})
+			setMarkers([...markers, newMarker]);
+		}
+	}
+
+	function updateCurrentSuggestion() {
+		for(let i = 0; i < allSuggestions.length; i ++)
+		{
+			if(allSuggestions[i].id == currentSuggestion.id)
+			{
+				setCurrentSuggestion(allSuggestions[i]);
+			}
+		}
 	}
 
 	function updateMarkers() {
 		if(allSuggestions)
 		{
-			for(let i = 0; i < allSuggestions.length; i++)
-		{
-			setMarkers([...markers, new mapboxgl.Marker({color: 'green', scale: allSuggestions[i].upvotes})
-			.setLngLat([allSuggestions[i].long, allSuggestions[i].lat])
-			.addTo(map.current)
-			.getElement().addEventListener('click', () => {
-				console.log(allSuggestions[i].id);
-			  })
-			])
+			for(let j = 0; j < markers.length; j++)
+			{
+				markers[j].remove();
+			}
+			setMarkers([]);
+			repopulateMarkers();
 		}
 		}
-	}
 
 	// On uploading new suggestion, update the markers. 
 	useEffect(() => {
@@ -121,23 +150,9 @@ export default function App() {
 >>>>>>> Stashed changes
 	}
 
-	// Update address and marker in response to pin location change. 
-	useEffect(() => {
-		if(pinLoc)
-		{
-			updateAddress().then((res) => {setAddress(res)});
-			if(pinMarker){
-				pinMarker = pinMarker.remove()
-			}
-			pinMarker = new mapboxgl.Marker()
-			.setLngLat([pinLoc.lng, pinLoc.lat])
-			.addTo(map.current);
-		}
-	}, [pinLoc])
-
 	// Update map 
 	useEffect(() => {
-		if (map.current) return; // initialize map only once
+		if (map.current) return; // initialize map only once	
 		map.current = new mapboxgl.Map({
 			container: mapContainer.current,
 			style: 'mapbox://styles/mapbox/streets-v12',
@@ -188,11 +203,18 @@ export default function App() {
 		});
 	});
 
-	function mapClickFn(coordinates)
+	async function mapClickFn(coordinates)
 	{
 		if((!pinLoc) || (coordinates.lng !== pinLoc.lng || coordinates.lat !== pinLoc.lat)) {
 			// Update state of current click. 
-			setPinLoc({lat: coordinates.lat, lng: coordinates.lng})
+			pinLoc = {lat: coordinates.lat, lng: coordinates.lng}
+			updateAddress().then((res) => {setAddress(res)});
+			if(pinMarker){
+				pinMarker = pinMarker.remove()
+			}
+			pinMarker = new mapboxgl.Marker({color: 'green'})
+			.setLngLat([pinLoc.lng, pinLoc.lat])
+			.addTo(map.current);
 
 		}
 	}
@@ -209,6 +231,8 @@ export default function App() {
 		<div>
 		<div ref={mapContainer} className="map-container" />
 		<AddButton setFormData={setFormData} getAddress={getAddress}/>
+		<SuggestionView show={showSuggestion} updateShow={setShowSuggestion} 
+						curSuggestion={currentSuggestion} updateSuggestions={updateSuggestions}/>
 		</div>
 		);
 
