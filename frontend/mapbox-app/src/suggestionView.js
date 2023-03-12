@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import axios from 'axios';
@@ -16,8 +16,8 @@ export default function SuggestionView({show, updateShow, curSuggestion, updateS
             const response = await axios.post(backend_url + "/upvote?", null, {params: {
                 id: curSuggestion.id
             }});
-            console.log(response);
             updateSuggestions();
+            handleClose();
         }
     }
 
@@ -27,11 +27,10 @@ export default function SuggestionView({show, updateShow, curSuggestion, updateS
             const response = await axios.post(backend_url + "/downvote?", null, {params: {
                 id: curSuggestion.id
             }});
-            console.log(response);
             updateSuggestions();
+            handleClose();
         }
     }
-
 
     return (
         <div>
@@ -43,7 +42,7 @@ export default function SuggestionView({show, updateShow, curSuggestion, updateS
                 <h6>{curSuggestion ? curSuggestion.desc : ' '} </h6>
             </Modal.Body>
             <Modal.Footer>
-                <h6 >{curSuggestion ? curSuggestion.upvotes - curSuggestion.downvotes : ' '} </h6>
+                <h6 >{curSuggestion ? (curSuggestion.upvotes - curSuggestion.downvotes) : ' '} </h6>
                 <ButtonGroup>
                     <Button variant="outline-danger" onClick={downvotePost}>
                     Downvote

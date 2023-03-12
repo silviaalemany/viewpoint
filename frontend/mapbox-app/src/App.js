@@ -63,6 +63,16 @@ export default function App() {
 		}
 	}
 
+	function updateCurrentSuggestion() {
+		for(let i = 0; i < allSuggestions.length; i ++)
+		{
+			if(allSuggestions[i].id == currentSuggestion.id)
+			{
+				setCurrentSuggestion(allSuggestions[i]);
+			}
+		}
+	}
+
 	function updateMarkers() {
 		if(allSuggestions)
 		{
@@ -210,7 +220,8 @@ export default function App() {
 		<div>
 		<div ref={mapContainer} className="map-container" />
 		<AddButton setFormData={setFormData} getAddress={getAddress}/>
-		<SuggestionView show={showSuggestion} updateShow={setShowSuggestion} curSuggestion={currentSuggestion} updateSuggestions={updateSuggestions}/>
+		<SuggestionView show={showSuggestion} updateShow={setShowSuggestion} 
+						curSuggestion={currentSuggestion} updateSuggestions={updateSuggestions}/>
 		</div>
 		);
 
