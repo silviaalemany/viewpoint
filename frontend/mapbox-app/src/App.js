@@ -25,12 +25,12 @@ export default function App() {
 	const [allSuggestions, setAllSuggestions] = useState([]);
 	const [markers, setMarkers] = useState([]);
 	const [address, setAddress] = useState('');
-	const [pinLoc, setPinLoc] = useState();
 	const [showSuggestion, setShowSuggestion] = useState(false);
 	const [currentSuggestion, setCurrentSuggestion] = useState('');
 
 	const userId = '0';
 
+	var pinLoc = {}
 	var pinMarker;
 	var formData = {};
 
@@ -52,9 +52,9 @@ export default function App() {
 			.setLngLat([allSuggestions[i].long, allSuggestions[i].lat])
 			.addTo(map.current)
 			.getElement().addEventListener('click', () => {
-				console.log(allSuggestions[i])
-				// setShowSuggestion(true);
-				// setCurrentSuggestion(allSuggestions[i])
+				//console.log(allSuggestions[i])
+				setShowSuggestion(true);
+				setCurrentSuggestion(allSuggestions[i])
 			  })
 			])
 		}
@@ -116,23 +116,9 @@ export default function App() {
 		}
 	}
 
-	// Update address and marker in response to pin location change. 
-	useEffect(() => {
-		if(pinLoc)
-		{
-			updateAddress().then((res) => {setAddress(res)});
-			if(pinMarker){
-				pinMarker = pinMarker.remove()
-			}
-			pinMarker = new mapboxgl.Marker()
-			.setLngLat([pinLoc.lng, pinLoc.lat])
-			.addTo(map.current);
-		}
-	}, [pinLoc])
-
 	// Update map 
 	useEffect(() => {
-		if (map.current) return; // initialize map only once
+		if (map.current) return; // initialize map only once	
 		map.current = new mapboxgl.Map({
 			container: mapContainer.current,
 			style: 'mapbox://styles/mapbox/streets-v12',
@@ -183,11 +169,18 @@ export default function App() {
 		});
 	});
 
-	function mapClickFn(coordinates)
+	async function mapClickFn(coordinates)
 	{
 		if((!pinLoc) || (coordinates.lng !== pinLoc.lng || coordinates.lat !== pinLoc.lat)) {
 			// Update state of current click. 
-			setPinLoc({lat: coordinates.lat, lng: coordinates.lng})
+			pinLoc = {lat: coordinates.lat, lng: coordinates.lng}
+			updateAddress().then((res) => {setAddress(res)});
+			if(pinMarker){
+				pinMarker = pinMarker.remove()
+			}
+			pinMarker = new mapboxgl.Marker()
+			.setLngLat([pinLoc.lng, pinLoc.lat])
+			.addTo(map.current);
 
 		}
 	}
@@ -204,7 +197,7 @@ export default function App() {
 		<div>
 		<div ref={mapContainer} className="map-container" />
 		<AddButton setFormData={setFormData} getAddress={getAddress}/>
-		{/* <SuggestionView show={showSuggestion} updateShow={setShowSuggestion} curSuggestion={currentSuggestion}/> */}
+		<SuggestionView show={showSuggestion} updateShow={setShowSuggestion} curSuggestion={currentSuggestion}/>
 		</div>
 		);
 
