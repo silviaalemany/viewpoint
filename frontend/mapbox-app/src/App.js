@@ -27,10 +27,9 @@ export default function App() {
 	const [address, setAddress] = useState('');
 	const [showSuggestion, setShowSuggestion] = useState(false);
 	const [currentSuggestion, setCurrentSuggestion] = useState('');
+	const [pinLoc, setPinLoc] = useState();
 
 	const userId = '0';
-
-	var pinLoc = {}
 	var pinMarker;
 	var formData = {};
 
@@ -51,7 +50,6 @@ export default function App() {
 			var color = upvotes > 4 ? 'cyan' : 
 						upvotes > 2 ? 'blue' : 'purple'
 			var newMarker = new mapboxgl.Marker({color: color})
-		
 			newMarker.setLngLat([allSuggestions[i].long, allSuggestions[i].lat])
 			.addTo(map.current)
 			.getElement().addEventListener('click', () => {
@@ -196,13 +194,13 @@ export default function App() {
 	{
 		if((!pinLoc) || (coordinates.lng !== pinLoc.lng || coordinates.lat !== pinLoc.lat)) {
 			// Update state of current click. 
-			pinLoc = {lat: coordinates.lat, lng: coordinates.lng}
+			setPinLoc({lat: coordinates.lat, lng: coordinates.lng});
 			updateAddress().then((res) => {setAddress(res)});
 			if(pinMarker){
 				pinMarker = pinMarker.remove()
 			}
 			pinMarker = new mapboxgl.Marker({color: 'green'})
-			.setLngLat([pinLoc.lng, pinLoc.lat])
+			.setLngLat([coordinates.lng, coordinates.lat])
 			.addTo(map.current);
 
 		}
