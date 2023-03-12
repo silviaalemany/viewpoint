@@ -5,6 +5,7 @@ import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-load
 import axios from 'axios';
 
 import AddButton from './AddButton';
+import SuggestionView from './suggestionView';
 import { MAPBOXKEY } from './keys';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // TODO: Move this to .env file. 
@@ -25,6 +26,7 @@ export default function App() {
 	const [markers, setMarkers] = useState([]);
 	const [address, setAddress] = useState('');
 	const [pinLoc, setPinLoc] = useState();
+	const [showSuggestion, setShowSuggestion] = useState(false);
 
 	const userId = '0';
 
@@ -92,6 +94,7 @@ export default function App() {
 	}
 
 	function setFormData(image, description, caption) {
+		console.log(image, description, caption);
 		formData.image = image;
 		formData.caption = caption; 
 		formData.description = description;
@@ -198,6 +201,7 @@ export default function App() {
 		<div>
 		<div ref={mapContainer} className="map-container" />
 		<AddButton setFormData={setFormData} getAddress={getAddress}/>
+		<SuggestionView show={true} updateShow={setShowSuggestion}/>
 		</div>
 		);
 
