@@ -23,6 +23,7 @@ export default function App() {
 	const [suggestionsPosted, setSuggestionsPosted] = useState([]);
 	const [allSuggestions, setAllSuggestions] = useState([]);
 	const [markers, setMarkers] = useState([]);
+	const [address, setAddress] = useState('');
 	const userId = '0';
 
 	var pinLng;
@@ -70,6 +71,21 @@ export default function App() {
 		console.log(suggestionsPosted);
 	}, [suggestionsPosted])
 
+	function getAddress() {
+		return address;
+	}
+
+
+	async function updateAddress()
+	{	
+		if (pinLng && pinLat) {
+			var url = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + String(pinLng) + "," + String(pinLat) + ".json?access_token=" + mapboxgl.accessToken;
+			const response = await axios.get(url);
+			return response.data.features[0].place_name;
+		} else {
+			return;
+		}
+	}
 
 	function setFormData(image, description, caption) {
 		formData.image = image;
@@ -146,6 +162,8 @@ export default function App() {
 			// Update state of current click. 
 			pinLng = coordinates.lng;
 			pinLat = coordinates.lat;
+			updateAddress()
+			.then((resp) => {setAddress(resp)});
 			// setSearchBar(geocoder.query(String(pinLat) + String(pinLng)));
 			if(marker){
 				marker = marker.remove()
@@ -165,7 +183,7 @@ export default function App() {
 	return (
 		<div>
 		<div ref={mapContainer} className="map-container" />
-		<AddButton getPinCoordinates={getCoordinates} setFormData={setFormData}/>
+		<AddButton getPinCoordinates={getCoordinates} setFormData={setFormData} getAddress={getAddress}/>
 		</div>
 		);
 
