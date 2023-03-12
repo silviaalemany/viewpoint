@@ -81,7 +81,8 @@ export default function App() {
 			caption: caption, 
 			desc: description, 
 			lat: pinLat,
-			long: pinLng
+			long: pinLng, 
+			img: image, 
 		}}).then((resp) => setSuggestionsPosted([...suggestionsPosted, resp.data.id]))
 	}
 
