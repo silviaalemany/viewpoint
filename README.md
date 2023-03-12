@@ -22,5 +22,7 @@ Open a(nother) new terminal window. Navigate to frontend/mapbox-app and run
 
 `` npm start ``
 
-* if you get an error about envelope-ssl, try this: `export NODE_OPTIONS=--openssl-legacy-provider`
+
+
+PS: if you get an error about envelope-ssl, try this: `export NODE_OPTIONS=--openssl-legacy-provider`
 
