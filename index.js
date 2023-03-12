@@ -1,6 +1,9 @@
 // set up Express
 var express = require('express');
 var app = express();
+const cors = require('cors')
+
+app.use(cors())
 
 // set up BodyParser
 var bodyParser = require('body-parser');

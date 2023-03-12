@@ -2,11 +2,14 @@ import React, { useRef, useEffect, useState } from 'react';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
+import axios from 'axios';
+
 import AddButton from './AddButton';
 import { MAPBOXKEY } from './keys';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // TODO: Move this to .env file. 
 mapboxgl.accessToken = MAPBOXKEY.apiKey;
+const backend_url = 'http://localhost:8002/'
 
 export default function App() {
 	const mapContainer = useRef(null);
@@ -17,6 +20,7 @@ export default function App() {
 	const [lng, setLng] = useState(-75.158924);
 	const [lat, setLat] = useState(39.9629223);
 	const [zoom, setZoom] = useState(11);
+	const userId = '0';
 
 	var pinLng;
 	var pinLat;
@@ -27,7 +31,15 @@ export default function App() {
 		formData.image = image;
 		formData.caption = caption; 
 		formData.description = description;
-		console.log(formData);
+		// /​​suggestion/create?id=0001&userID=bob&upvotes=0&downvotes=0&caption=gdaymate&desc=oops&lat=1&long=2
+		axios.post('http://localhost:8002/create?', null, {params: {
+			userID: userId, 
+			upvotes: 1, 
+			caption: caption, 
+			desc: description, 
+			lat: pinLat,
+			long: pinLng
+		}}).then((resp) => console.log(resp))
 	}
 
 	useEffect(() => {
