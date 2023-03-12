@@ -182,7 +182,8 @@ app.use('/upvote', (req, res) => {
 				} else if (!p || p.length == 0) {
 					res.json( { 'status' : 'not found' } );
 				} else {
-					res.json( { 'status' : 'updated' } );
+					res.json( { 'status' : 'updated', 
+								'new_value': n} );
 				}
 			});
 		}
@@ -210,7 +211,8 @@ app.use('/downvote', (req, res) => {
 				} else if (!p || p.length == 0) {
 					res.json( { 'status' : 'not found' } );
 				} else {
-					res.json( { 'status' : 'updated' } );
+					res.json( { 'new_value': n, 
+								'status': 'updated' } );
 				}
 			});
 		}

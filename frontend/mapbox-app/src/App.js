@@ -39,27 +39,41 @@ export default function App() {
 	}
 
 	async function updateSuggestions() {
+		console.log('updating suggestions.');
 		const resp = await getAllSuggestions();
 		setAllSuggestions(resp.data.entries);
 	}
 
-	function updateMarkers() {
-		if(allSuggestions)
+	function repopulateMarkers() {
+		for(let i = 0; i < allSuggestions.length; i++)
 		{
-			for(let i = 0; i < allSuggestions.length; i++)
-		{
-			setMarkers([...markers, new mapboxgl.Marker({color: 'green', scale: allSuggestions[i].upvotes})
-			.setLngLat([allSuggestions[i].long, allSuggestions[i].lat])
+			var upvotes = allSuggestions[i].upvotes - allSuggestions[i].downvotes;
+			var color = upvotes > 4 ? 'cyan' : 
+						upvotes > 2 ? 'blue' : 'purple'
+			var newMarker = new mapboxgl.Marker({color: color})
+		
+			newMarker.setLngLat([allSuggestions[i].long, allSuggestions[i].lat])
 			.addTo(map.current)
 			.getElement().addEventListener('click', () => {
 				//console.log(allSuggestions[i])
 				setShowSuggestion(true);
 				setCurrentSuggestion(allSuggestions[i])
-			  })
-			])
-		}
+			})
+			setMarkers([...markers, newMarker]);
 		}
 	}
+
+	function updateMarkers() {
+		if(allSuggestions)
+		{
+			for(let j = 0; j < markers.length; j++)
+			{
+				markers[j].remove();
+			}
+			setMarkers([]);
+			repopulateMarkers();
+		}
+		}
 
 	// On uploading new suggestion, update the markers. 
 	useEffect(() => {
@@ -97,7 +111,6 @@ export default function App() {
 	}
 
 	function setFormData(image, description, caption) {
-		console.log(image, description, caption);
 		formData.image = image;
 		formData.caption = caption; 
 		formData.description = description;
@@ -178,7 +191,7 @@ export default function App() {
 			if(pinMarker){
 				pinMarker = pinMarker.remove()
 			}
-			pinMarker = new mapboxgl.Marker()
+			pinMarker = new mapboxgl.Marker({color: 'green'})
 			.setLngLat([pinLoc.lng, pinLoc.lat])
 			.addTo(map.current);
 
@@ -197,7 +210,7 @@ export default function App() {
 		<div>
 		<div ref={mapContainer} className="map-container" />
 		<AddButton setFormData={setFormData} getAddress={getAddress}/>
-		<SuggestionView show={showSuggestion} updateShow={setShowSuggestion} curSuggestion={currentSuggestion}/>
+		<SuggestionView show={showSuggestion} updateShow={setShowSuggestion} curSuggestion={currentSuggestion} updateSuggestions={updateSuggestions}/>
 		</div>
 		);
 
