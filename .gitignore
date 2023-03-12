@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 keys.js
 **/node_modules/**
 .DS_Store
 **/build/**
 db/**
+=======
+.env
+>>>>>>> cd3024b (adding image.js)
