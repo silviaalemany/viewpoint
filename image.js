@@ -42,3 +42,5 @@ exports.getImageUrl = async (input_file, output_file) => {
     const content = fs.readFileSync(input_file);
     return imageUpload(output_file, content)
 }
+
+

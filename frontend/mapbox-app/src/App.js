@@ -95,6 +95,7 @@ export default function App() {
 		formData.image = image;
 		formData.caption = caption; 
 		formData.description = description;
+<<<<<<< Updated upstream
 		if(pinLoc) {
 			axios.post(backend_url+ '/create?', null, {params: {
 				userID: userId, 
@@ -108,6 +109,16 @@ export default function App() {
 		} else {
 			console.log('not set long/lin');	
 		}
+=======
+		axios.post(backend_url+ '/create?', {
+			userID: userId, 
+			upvotes: 1, 
+			caption: caption, 
+			desc: description, 
+			lat: pinLat,
+			long: pinLng
+		}).then((resp) => setSuggestionsPosted([...suggestionsPosted, resp.data.id]))
+>>>>>>> Stashed changes
 	}
 
 	// Update address and marker in response to pin location change. 
