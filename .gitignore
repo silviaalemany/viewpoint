@@ -5,3 +5,4 @@ keys.js
 db/*
 .env
 node_modules/**
+firebaseConfig.js
