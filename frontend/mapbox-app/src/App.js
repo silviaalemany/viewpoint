@@ -22,6 +22,7 @@ export default function App() {
 	const [zoom, setZoom] = useState(11);
 	const [suggestionsPosted, setSuggestionsPosted] = useState([]);
 	const [allSuggestions, setAllSuggestions] = useState([]);
+	const [markers, setMarkers] = useState([]);
 	const userId = '0';
 
 	var pinLng;
@@ -29,20 +30,44 @@ export default function App() {
 	var marker;
 	var formData = {};
 
-	console.log(allSuggestions);
 	async function getAllSuggestions() {
-		axios.post(backend_url + '/list?')
-		.then((resp) => setAllSuggestions(resp.data));
+		return axios.post(backend_url + '/list?')
 	}
+
+	async function updateSuggestions() {
+		const resp = await getAllSuggestions();
+		setAllSuggestions(resp.data.entries);
+	}
+
+	function updateMarkers() {
+		for(let i = 0; i < allSuggestions.length; i++)
+		{
+			setMarkers([...markers, new mapboxgl.Marker({color: 'green', scale: allSuggestions[i].upvotes})
+			.setLngLat([allSuggestions[i].long, allSuggestions[i].lat])
+			.addTo(map.current)
+			.getElement().addEventListener('click', () => {
+				console.log(allSuggestions[i].id);
+			  })
+			])
+		}
+	}
+
+	useEffect(() => {
+		updateMarkers();
+	}, [allSuggestions])
 
 	// On mount, query database for all the existing entries. 
 	useEffect(() => {
-		getAllSuggestions();
+		updateSuggestions();
 	}, [], );
 
 	// On post, requry data base for new nodes. 
 	useEffect(() => {
-		getAllSuggestions();
+		updateSuggestions();
+	}, [suggestionsPosted])
+
+	useEffect(() => {
+		console.log(suggestionsPosted);
 	}, [suggestionsPosted])
 
 
