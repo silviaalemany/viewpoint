@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/Form';
 import React, { useState } from 'react';
 import UploadButton from './uploadButton';
 
-export default function AddButton({getPinCoordinates, setFormData, getAddress}) {
+export default function AddButton({setFormData, getAddress}) {
     const [show, setShow] = useState(false)
 
     var caption;
@@ -26,11 +26,6 @@ export default function AddButton({getPinCoordinates, setFormData, getAddress}) 
 
     function updateCaption(event) {
         caption = event.target.value;
-    }
-
-    function coordinateToString() {
-
-        return String(getPinCoordinates().pinLat) + ", " + String(getPinCoordinates().pinLng);
     }
 
     function updateImageSource(newSource) {
