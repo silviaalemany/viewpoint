@@ -9,7 +9,7 @@ import { MAPBOXKEY } from './keys';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // TODO: Move this to .env file. 
 mapboxgl.accessToken = MAPBOXKEY.apiKey;
-const backend_url = 'http://localhost:8002/'
+const backend_url = 'http://localhost:8002'
 
 export default function App() {
 	const mapContainer = useRef(null);
@@ -20,26 +20,44 @@ export default function App() {
 	const [lng, setLng] = useState(-75.158924);
 	const [lat, setLat] = useState(39.9629223);
 	const [zoom, setZoom] = useState(11);
+	const [suggestionsPosted, setSuggestionsPosted] = useState([]);
+	const [allSuggestions, setAllSuggestions] = useState([]);
 	const userId = '0';
 
 	var pinLng;
 	var pinLat;
 	var marker;
-	var formData = {}
+	var formData = {};
+
+
+	async function getAllSuggestions() {
+		axios.post(backend_url + '/list?')
+		.then((resp) => setAllSuggestions(resp.data));
+	}
+	
+	// On mount, query database for all the existing entries. 
+	useEffect(() => {
+		getAllSuggestions();
+	}, [], );
+
+	// On post, requry data base for new nodes. 
+	useEffect(() => {
+		getAllSuggestions();
+	}, [suggestionsPosted])
+
 
 	function setFormData(image, description, caption) {
 		formData.image = image;
 		formData.caption = caption; 
 		formData.description = description;
-		// /​​suggestion/create?id=0001&userID=bob&upvotes=0&downvotes=0&caption=gdaymate&desc=oops&lat=1&long=2
-		axios.post('http://localhost:8002/create?', null, {params: {
+		axios.post(backend_url+ '/create?', null, {params: {
 			userID: userId, 
 			upvotes: 1, 
 			caption: caption, 
 			desc: description, 
 			lat: pinLat,
 			long: pinLng
-		}}).then((resp) => console.log(resp))
+		}}).then((resp) => setSuggestionsPosted([...suggestionsPosted, resp.data.id]))
 	}
 
 	useEffect(() => {
