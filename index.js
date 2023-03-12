@@ -38,6 +38,7 @@ app.use('/create', (req, res) => {
 		downvotes: req.query.upvotes,
 		// caption is input to DALL-E
 		caption: req.query.caption,
+		img: req.query.imgFile,
 		// desc is user description (supplemental)
 		desc: req.query.desc,
 		lat: req.query.lat,
@@ -122,6 +123,7 @@ app.use('/get', (req, res) => {
 				'desc' : post[0].desc,
 				'lat' : post[0].lat,
 				'long' : post[0].long,
+				'img': post[0].imgFile,
 				'resolved' : post[0].resolved,
 				'status' : 'successful'
 			});

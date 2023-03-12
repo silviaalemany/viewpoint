@@ -22,44 +22,109 @@ export default function App() {
 	const [zoom, setZoom] = useState(11);
 	const [suggestionsPosted, setSuggestionsPosted] = useState([]);
 	const [allSuggestions, setAllSuggestions] = useState([]);
+	const [markers, setMarkers] = useState([]);
+	const [address, setAddress] = useState('');
+	const [pinLoc, setPinLoc] = useState();
+
 	const userId = '0';
 
-	var pinLng;
-	var pinLat;
-	var marker;
+	var pinMarker;
 	var formData = {};
 
-	console.log(allSuggestions);
 	async function getAllSuggestions() {
-		axios.post(backend_url + '/list?')
-		.then((resp) => setAllSuggestions(resp.data));
+		return axios.post(backend_url + '/list?')
 	}
+
+	async function updateSuggestions() {
+		const resp = await getAllSuggestions();
+		setAllSuggestions(resp.data.entries);
+	}
+
+	function updateMarkers() {
+		if(allSuggestions)
+		{
+			for(let i = 0; i < allSuggestions.length; i++)
+		{
+			setMarkers([...markers, new mapboxgl.Marker({color: 'green', scale: allSuggestions[i].upvotes})
+			.setLngLat([allSuggestions[i].long, allSuggestions[i].lat])
+			.addTo(map.current)
+			.getElement().addEventListener('click', () => {
+				console.log(allSuggestions[i].id);
+			  })
+			])
+		}
+		}
+	}
+
+	// On uploading new suggestion, update the markers. 
+	useEffect(() => {
+		updateMarkers();
+	}, [allSuggestions])
 
 	// On mount, query database for all the existing entries. 
 	useEffect(() => {
-		getAllSuggestions();
+		updateSuggestions();
 	}, [], );
 
 	// On post, requry data base for new nodes. 
 	useEffect(() => {
-		getAllSuggestions();
+		updateSuggestions();
 	}, [suggestionsPosted])
 
+	useEffect(() => {
+		console.log(suggestionsPosted);
+	}, [suggestionsPosted])
+
+	function getAddress() {
+		return address;
+	}
+
+
+	async function updateAddress()
+	{	
+		if (pinLoc) {
+			var url = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + String(pinLoc.lng) + "," + String(pinLoc.lat) + ".json?access_token=" + mapboxgl.accessToken;
+			const response = await axios.get(url);
+			return response.data.features[0].place_name;
+		} else {
+			return;
+		}
+	}
 
 	function setFormData(image, description, caption) {
 		formData.image = image;
 		formData.caption = caption; 
 		formData.description = description;
-		axios.post(backend_url+ '/create?', null, {params: {
-			userID: userId, 
-			upvotes: 1, 
-			caption: caption, 
-			desc: description, 
-			lat: pinLat,
-			long: pinLng
-		}}).then((resp) => setSuggestionsPosted([...suggestionsPosted, resp.data.id]))
+		if(pinLoc) {
+			axios.post(backend_url+ '/create?', null, {params: {
+				userID: userId, 
+				upvotes: 1, 
+				caption: caption, 
+				desc: description, 
+				lat: pinLoc.lat,
+				long: pinLoc.lng, 
+				img: image, 
+			}}).then((resp) => setSuggestionsPosted([...suggestionsPosted, resp.data.id]))
+		} else {
+			console.log('not set long/lin');	
+		}
 	}
 
+	// Update address and marker in response to pin location change. 
+	useEffect(() => {
+		if(pinLoc)
+		{
+			updateAddress().then((res) => {setAddress(res)});
+			if(pinMarker){
+				pinMarker = pinMarker.remove()
+			}
+			pinMarker = new mapboxgl.Marker()
+			.setLngLat([pinLoc.lng, pinLoc.lat])
+			.addTo(map.current);
+		}
+	}, [pinLoc])
+
+	// Update map 
 	useEffect(() => {
 		if (map.current) return; // initialize map only once
 		map.current = new mapboxgl.Map({
@@ -70,6 +135,7 @@ export default function App() {
 			});
 		});
 	
+	// Update search bar
 	useEffect(()=>{
 		if(activatedSearchBar.current) return;
 		activatedSearchBar.current = true;
@@ -83,6 +149,7 @@ export default function App() {
 		);
 	});
 
+	// Update current location
 	useEffect(() => {
 		if(foundCurrentLocation.current) return;
 		foundCurrentLocation.current = true;
@@ -100,6 +167,7 @@ export default function App() {
 		
 	});
 
+	// Update view for map
 	useEffect(() => {
 		if (!map.current) return; // wait for map to initialize
 		map.current.on('move', () => {
@@ -109,26 +177,16 @@ export default function App() {
 		});
 	});
 
-	function getCoordinates()
-	{
-		return {pinLat: pinLat, pinLng: pinLng}
-	}
-
 	function mapClickFn(coordinates)
 	{
-		if(coordinates.lng !== pinLng || coordinates.lat !== pinLat) {
+		if((!pinLoc) || (coordinates.lng !== pinLoc.lng || coordinates.lat !== pinLoc.lat)) {
 			// Update state of current click. 
-			pinLng = coordinates.lng;
-			pinLat = coordinates.lat;
-			// setSearchBar(geocoder.query(String(pinLat) + String(pinLng)));
-			if(marker){
-				marker = marker.remove()
-			}
-			marker = new mapboxgl.Marker()
-			.setLngLat([pinLng, pinLat])
-			.addTo(map.current);
+			setPinLoc({lat: coordinates.lat, lng: coordinates.lng})
+
 		}
 	}
+
+	// Add onClick method for the map. 
 	useEffect(() => {
 		if (!map.current) return; 
 		map.current.on("click", (e) => {
@@ -139,7 +197,7 @@ export default function App() {
 	return (
 		<div>
 		<div ref={mapContainer} className="map-container" />
-		<AddButton getPinCoordinates={getCoordinates} setFormData={setFormData}/>
+		<AddButton setFormData={setFormData} getAddress={getAddress}/>
 		</div>
 		);
 
