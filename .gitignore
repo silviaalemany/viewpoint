@@ -2,4 +2,8 @@ keys.js
 **/node_modules/**
 .DS_Store
 **/build/**
+
 db/**
+db/*
+.env
+node_modules/**

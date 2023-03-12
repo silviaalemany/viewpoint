@@ -1,6 +1,9 @@
 // set up Express
 var express = require('express');
 var app = express();
+const cors = require('cors')
+
+app.use(cors())
 
 // set up BodyParser
 var bodyParser = require('body-parser');
@@ -12,6 +15,7 @@ var suggestion = require('./suggestion.js');
 /***************************************/
 function makeid(length) {
 	let result = '';
+	// TODO: Update this to use UUID
 	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 	const charactersLength = characters.length;
 	let counter = 0;
@@ -50,13 +54,52 @@ app.use('/create', (req, res) => {
 		}
 		else {
 			// display the "successfull created" message
-			res.send('successfully added ' + post.id + ' to the database');
+			res.send({
+				msg: 'successfully added ' + post.id + ' to the database', 
+				id: post.id
+			});
 		}
 	});
 });
 
 
 // endpoint for showing all the people
+app.use('/list', (req, res) => {
+	suggestion.find({}, (err, post) => {
+		if (err) {
+		    res.type('html').status(400);
+		    console.log('uh oh' + err);
+			res.json({'status': 'error'});
+		    res.write(err);
+		}
+		else if (!post || post.length == 0){
+			res.json({'status' : 'post not found'});
+		} else {
+			res.type('html').status(400);
+			var allRecords = [];
+			for(let i = 0; i < post.length; i++)
+			{
+				allRecords.push({
+					'id' : post[i].id,
+					'userID' : post[i].userID,
+					'upvotes' : post[i].upvotes,
+					'downvotes' : post[i].downvotes,
+					'caption' : post[i].caption,
+					'desc' : post[i].desc,
+					'lat' : post[i].lat,
+					'long' : post[i].long,
+					'resolved' : post[i].resolved,
+				});
+			}
+			res.type('html').status(200);
+			res.json( {
+				'entries': allRecords,
+				'status' : 'successful'
+			});
+		}
+	});
+});
+
 app.use('/get', (req, res) => {
 	// URI target: /get?id=<post_id>
 	// output: JSON representation of the object
@@ -85,6 +128,17 @@ app.use('/get', (req, res) => {
 		}
 	});
 });
+
+//delete all entires. 
+app.use('/delteAll', (req, res) => {
+	suggestion.deleteMany({}, (err, post) => {
+		if (err) {
+			res.json( { 'status' : e } );
+		} else {
+			res.json({'status': 'successful'})
+		}
+	});
+})
 
 app.use('/delete', (req, res) => {
 	// URI target: /delete?id=<post_id>
