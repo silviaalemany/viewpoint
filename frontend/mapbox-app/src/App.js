@@ -27,6 +27,7 @@ export default function App() {
 	const [address, setAddress] = useState('');
 	const [pinLoc, setPinLoc] = useState();
 	const [showSuggestion, setShowSuggestion] = useState(false);
+	const [currentSuggestion, setCurrentSuggestion] = useState('');
 
 	const userId = '0';
 
@@ -51,7 +52,9 @@ export default function App() {
 			.setLngLat([allSuggestions[i].long, allSuggestions[i].lat])
 			.addTo(map.current)
 			.getElement().addEventListener('click', () => {
-				console.log(allSuggestions[i].id);
+				console.log(allSuggestions[i])
+				// setShowSuggestion(true);
+				// setCurrentSuggestion(allSuggestions[i])
 			  })
 			])
 		}
@@ -201,7 +204,7 @@ export default function App() {
 		<div>
 		<div ref={mapContainer} className="map-container" />
 		<AddButton setFormData={setFormData} getAddress={getAddress}/>
-		<SuggestionView show={true} updateShow={setShowSuggestion}/>
+		{/* <SuggestionView show={showSuggestion} updateShow={setShowSuggestion} curSuggestion={currentSuggestion}/> */}
 		</div>
 		);
 

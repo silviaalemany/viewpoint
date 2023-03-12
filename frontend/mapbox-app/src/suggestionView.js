@@ -2,17 +2,14 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
-export default function SuggestionView({show, updateShow}) {
-    const [postId, setPostId] = useState('');
-
+export default function SuggestionView({show, updateShow, curSuggestion}) {
     const handleClose = () => updateShow(false);
     const handleShow = () => updateShow(true);
-
     return (
         <div>
-        <Modal show={false} onHide={handleClose} centered>
+        <Modal show={show} onHide={handleClose} centered>
             <Modal.Header closeButton>
-                <Modal.Title>This is the name.</Modal.Title>
+                <Modal.Title>{curSuggestion ? curSuggestion.caption : ' '}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
         
