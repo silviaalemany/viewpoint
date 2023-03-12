@@ -56,6 +56,7 @@ export default function App() {
 		}
 	}
 
+	// On uploading new suggestion, update the markers. 
 	useEffect(() => {
 		updateMarkers();
 	}, [allSuggestions])
@@ -109,6 +110,7 @@ export default function App() {
 		}
 	}
 
+	// Update address and marker in response to pin location change. 
 	useEffect(() => {
 		if(pinLoc)
 		{
@@ -122,6 +124,7 @@ export default function App() {
 		}
 	}, [pinLoc])
 
+	// Update map 
 	useEffect(() => {
 		if (map.current) return; // initialize map only once
 		map.current = new mapboxgl.Map({
@@ -132,6 +135,7 @@ export default function App() {
 			});
 		});
 	
+	// Update search bar
 	useEffect(()=>{
 		if(activatedSearchBar.current) return;
 		activatedSearchBar.current = true;
@@ -145,6 +149,7 @@ export default function App() {
 		);
 	});
 
+	// Update current location
 	useEffect(() => {
 		if(foundCurrentLocation.current) return;
 		foundCurrentLocation.current = true;
@@ -162,6 +167,7 @@ export default function App() {
 		
 	});
 
+	// Update view for map
 	useEffect(() => {
 		if (!map.current) return; // wait for map to initialize
 		map.current.on('move', () => {
@@ -179,6 +185,8 @@ export default function App() {
 
 		}
 	}
+
+	// Add onClick method for the map. 
 	useEffect(() => {
 		if (!map.current) return; 
 		map.current.on("click", (e) => {
